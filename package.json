@@ -4,8 +4,8 @@
   "description": "A tool to speed up and join multiple videos",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && electron .",
-    "dev": "concurrently --kill-others \"nodemon index.js\" \"webpack --mode development --watch\"",
+    "start": "electron .",
+    "dev": "concurrently --kill-others \"nodemon webpackDev.js\" \"webpack --mode development --watch\"",
     "build": "webpack --mode production",
     "lint": "eslint . --fix"
   },
