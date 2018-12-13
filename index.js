@@ -1,53 +1,103 @@
 const {
-  app, BrowserWindow, globalShortcut,
-  ipcMain, protocol
+	app, BrowserWindow, globalShortcut,
+	ipcMain, protocol
 } = require('electron');
+const fs = require('fs');
 const { spawn } = require('child_process');
 const net = require('net');
 const path = require('path');
+const { parseFFMPEGProgress }  = require('./src/utils');
 
-const ffmpegProgressServer = net.createServer(socket => {
-  socket.on('data', data => {
-    console.log(data.toString('utf-8'))
-  })
-})
-ffmpegProgressServer.listen(0, '127.0.0.1', () => {
-  const port = ffmpegProgressServer.address().port;
-  const subprocess = spawn('ffmpeg.exe', [
-    '-f', 'concat', '-safe', '0',
-    '-i', 'list.txt',
-    '-progress', `tcp://127.0.0.1:${port}`,
-    '-an', '-vf', 'setpts=PTS/360', 'out.mp4'
-  ])
-})
-
+let appChannel;
+let port;
 let mainWindow;
+let videoDurations = [];
 
-function createWindow () {
-  mainWindow = new BrowserWindow({
-    width: 768,
-    height: 432
-  })
 
-  mainWindow.openDevTools();
+/*
+ * Splices together videos sped up by speedMultiplier and saves it to out
+ * @param {string[]} videos - list of video paths
+ * @param {float} speedMultiplier - the amount to speed up the video(s)
+ * @param {string} out - output path
+ * @returns {void}
+ */
+function spliceUp(videos, speedMultiplier, out){
+  // store video durations (seconds) 
+  videos.forEach(f => {
+    let probe = spawn('ffprobe', [
+      '-v', 'error',
+      '-show_entries', 'format=duration',
+      '-of', 'default=noprint_wrappers=1:nokey=1', f
+    ]);
+    probe.stdout.on('data', data => {
+      videoDurations.push((Number(data.toString('utf-8')) | 0) / speedMultiplier);
+    });
+  });
 
-  mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'))
-
-  mainWindow.on('closed', function () {
-    mainWindow = null
+  fs.writeFileSync('list.txt', videos.map(v => `file '${v}'`).join('\n'));
+	const subprocess = spawn('ffmpeg', [
+		'-y',
+		'-f', 'concat', '-safe', '0',
+		'-i', 'list.txt',
+		'-progress', `tcp://127.0.0.1:${port}`,
+		'-an', '-vf', `setpts=PTS/${speedMultiplier}`, out
+	]);
+  subprocess.on('close', code => {
+    fs.unlink('list.txt', e => {if (e) throw err});
+    videoDurations.length = 0;
   })
 }
 
-app.on('ready', createWindow)
+
+function createWindow () {
+	mainWindow = new BrowserWindow({
+		width: 768,
+		height: 432
+	});
+
+	mainWindow.openDevTools();
+
+	mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
+
+	mainWindow.on('closed', function () {
+		mainWindow = null;
+	});
+}
+
+
+const ffmpegProgressServer = net.createServer(socket => {
+  socket.on('data', data => {
+    data = parseFFMPEGProgress(data.toString('utf-8'));
+    if (videoDurations){
+      data.out_time_final = videoDurations.reduce((a, b) => a+b);
+    } else {
+      data.out_time_final = 0;
+    }
+
+    if (appChannel){
+      appChannel.sender.send('progress', data);
+    }
+  });
+});
+ffmpegProgressServer.listen(0, '127.0.0.1', () => {
+  port = ffmpegProgressServer.address().port;
+});
+
+app.on('ready', createWindow);
 
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
+	if (process.platform !== 'darwin') {
+		app.quit();
+	}
+});
 
 app.on('activate', function () {
-  if (mainWindow === null) {
-    createWindow()
-  }
-})
+	if (mainWindow === null) {
+		createWindow();
+	}
+});
+
+ipcMain.on('export', (e, payload) => {
+  appChannel = e;
+  spliceUp(payload.videos, payload.speedMultiplier, 'out.mp4')
+});
