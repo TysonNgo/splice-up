@@ -3,3 +3,4 @@ dist/
 ffmpeg*
 ffprobe*
 *.mp4
+list.txt
