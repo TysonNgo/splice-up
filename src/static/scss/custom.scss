@@ -1,1 +1,38 @@
 // main sass file
+html, body{
+	margin: 0;
+}
+video{
+	background: #000;
+	display: inline-block;
+	width: 66%;
+}
+.video-list{
+	display: inline-block;
+	width: 33%;
+	li{
+
+	}
+}
+.progress-container{
+	$height: 3em;
+	.progress-bar{
+		position: relative;
+		text-align: center;
+		width: 100%;
+		height: $height;
+		background: rgba(80,80,80,0.3);
+		.progress-bar-loaded{
+			position: absolute;
+			z-index: -1;
+			top: 0;
+			left: 0;
+			width: 0%;
+			height: $height;
+			background: green;
+		}
+		.progress-bar-text{
+			padding: $height / 3.0;
+		}
+	}
+}

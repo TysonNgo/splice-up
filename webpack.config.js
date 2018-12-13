@@ -13,6 +13,9 @@ const extractSass = new ExtractTextPlugin({
 
 
 module.exports = {
+	entry: {
+		main: './src/index.jsx'
+	},
 	output: {
 		path: __dirname + '/dist',
 		filename: 'main.js',
@@ -46,5 +49,8 @@ module.exports = {
 	plugins: [
 		htmlWebpack,
 		extractSass
-	]
+	],
+	resolve: {
+		extensions: ['.js', '.jsx']
+	}
 };
