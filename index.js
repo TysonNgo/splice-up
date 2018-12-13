@@ -99,5 +99,5 @@ app.on('activate', function () {
 
 ipcMain.on('export', (e, payload) => {
   appChannel = e;
-  spliceUp(payload.videos, payload.speedMultiplier, 'out.mp4')
+  spliceUp(payload.videos, payload.speedMultiplier, payload.outputDir)
 });

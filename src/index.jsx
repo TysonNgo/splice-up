@@ -11,15 +11,13 @@ class App extends Component{
 		super(props);
 		this.ipc = window.require('electron').ipcRenderer;
 	}
-	componentDidMount(){
-		this.ipc.send('ready')
-	}
+
 	render(){
 		return (
 		<div>
-			<Form></Form>
+			<Form ipc={this.ipc}></Form>
 			<br></br>
-			<Progress></Progress>
+			<Progress ipc={this.ipc}></Progress>
 		</div>
 		)
 	}
