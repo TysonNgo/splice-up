@@ -4,7 +4,8 @@
   "description": "A tool to speed up and join multiple videos",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently --kill-others \"npm run dev\" \"electron .\"",
+    "start": "concurrently --kill-others \"npm run dev\" \"npm run electron\"",
+    "electron": "electron .",
     "dev": "webpack --mode development --watch",
     "build": "webpack --mode production",
     "lint": "eslint . --fix"
