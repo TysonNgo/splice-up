@@ -68,7 +68,7 @@ class Form extends Component{
 			<form onSubmit={this.exportVideo.bind(this)}>
 				<div className='video-container' onDragOver={this.dragOver} onDrop={this.dropVideo.bind(this)}>
 					<div className='video-preview'><video src={this.state.preview} controls></video></div>
-					<ul className='video-list'>
+					<ul className={this.state.videos.size ? 'video-list' : 'video-list empty'}>
 						{[...this.state.videos].map(v => (
 							<li title={v} key={v} tabIndex={0} onDoubleClick={this.changePreview(v)}>{v.replace(/\\/g,'/').split('/').pop()}</li>
 						))}

@@ -43,6 +43,11 @@ module.exports = {
 					],
 					fallback: 'style-loader'
 				})
+			},
+			{
+				test: /\.(ico|png)$/,
+				exclude: /node_modules/,
+				loader: 'url-loader'
 			}
 		]
 	},
