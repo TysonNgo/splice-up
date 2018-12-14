@@ -24,8 +24,8 @@ class Progress extends Component{
 			let progress = (this.hhmmssToSeconds(d.out_time)/d.out_time_final * 100).toFixed(1);
 			this.setState({
 				text: `processed: ${d.out_time} | ` +
-				`size: ${this.humanFileSize(d.total_size)} | `+
-				`bitrate: ${d.bitrate === 'N/A' ? '' : d.bitrate}`,
+				`size: ${this.humanFileSize(d.total_size)}`+
+				`${d.bitrate === 'N/A' ? '' : ' | bitrate: '+d.bitrate}`,
 				progress: progress
 			});
 		})

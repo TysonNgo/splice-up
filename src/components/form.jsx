@@ -6,13 +6,20 @@ class Form extends Component{
 		this.state = {
 			videos: new Set(),
 			speedMultiplier: 360,
-			preview: ''
+			preview: '',
+			canExport: true
 		}
 		this.dialog = window.require('electron').remote.dialog;
 	}
 
 	componentDidMount(){
-		//this.props.ipc.send('export', {videos: ['1.mp4', '2.mp4', '3.mp4'], speedMultiplier: 2, outputDir: 'out.mp4'});
+		this.props.ipc.on('progress', (e, d) => {
+			if (d.progress === 'end'){
+				this.setState({canExport: true});
+			} else {
+				this.setState({canExport: false});
+			}
+		})
 	}
 	
 	speedMultiplierChange(e){
@@ -29,14 +36,12 @@ class Form extends Component{
 				}
 			]});
 		if (exportPath){
-			/* TODO send ipc export data
 			let data = {
-				videos: [...],
+				videos: [...this.state.videos],
 				speedMultiplier: this.state.speedMultiplier,
 				outputDir: exportPath
 			}
-			*/
-			// this.props.ipc.send('export', data);
+			this.props.ipc.send('export', data);
 		}
 	}
 
@@ -78,7 +83,7 @@ class Form extends Component{
 					Speed Multiplier:
 					<input type='number' min={1} onChange={this.speedMultiplierChange.bind(this)} value={this.state.speedMultiplier}></input>
 				</label>
-				<button>export</button>
+				<button disabled={!this.state.canExport || !this.state.videos.size}>export</button>
 			</form>
 		)
 	}
