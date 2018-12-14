@@ -5,7 +5,8 @@ class Form extends Component{
 		super(props);
 		this.state = {
 			videos: new Set(),
-			speedMultiplier: 360
+			speedMultiplier: 360,
+			preview: ''
 		}
 		this.dialog = window.require('electron').remote.dialog;
 	}
@@ -45,7 +46,8 @@ class Form extends Component{
 		for (let i = 0; i < files.length; i++){
 			if (files[i].type.startsWith('video')){
 				this.setState(prev => ({
-					videos: new Set(prev.videos.add(files[i].path))
+					videos: new Set(prev.videos.add(files[i].path)),
+					preview: files[i].path
 				}))
 			}
 		}
@@ -59,14 +61,17 @@ class Form extends Component{
 		return (
 			<form onSubmit={this.exportVideo.bind(this)}>
 				<div className='video-container' onDragOver={this.dragOver} onDrop={this.dropVideo.bind(this)}>
-					<div className='video-preview'><video src='../1.mp4'></video></div>
+					<div className='video-preview'><video src={this.state.preview} controls></video></div>
 					<ul className='video-list'>
 						{[...this.state.videos].map(v => (
 							<li key={v} tabIndex={0}>{v}</li>
 						))}
 					</ul>
 				</div>
-				<input type='number' min={1} onChange={this.speedMultiplierChange.bind(this)} value={this.state.speedMultiplier}></input>
+				<label>
+					Speed Multiplier:
+					<input type='number' min={1} onChange={this.speedMultiplierChange.bind(this)} value={this.state.speedMultiplier}></input>
+				</label>
 				<button>export</button>
 			</form>
 		)
