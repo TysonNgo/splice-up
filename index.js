@@ -22,19 +22,19 @@ let videoDurations = [];
  * @returns {void}
  */
 function spliceUp(videos, speedMultiplier, out){
-  // store video durations (seconds) 
-  videos.forEach(f => {
-    let probe = spawn('ffprobe', [
-      '-v', 'error',
-      '-show_entries', 'format=duration',
-      '-of', 'default=noprint_wrappers=1:nokey=1', f
-    ]);
-    probe.stdout.on('data', data => {
-      videoDurations.push((Number(data.toString('utf-8')) | 0) / speedMultiplier);
-    });
-  });
+	// store video durations (seconds) 
+	videos.forEach(f => {
+		let probe = spawn('ffprobe', [
+			'-v', 'error',
+			'-show_entries', 'format=duration',
+			'-of', 'default=noprint_wrappers=1:nokey=1', f
+		]);
+		probe.stdout.on('data', data => {
+			videoDurations.push((Number(data.toString('utf-8')) | 0) / speedMultiplier);
+		});
+	});
 
-  fs.writeFileSync('list.txt', videos.map(v => `file '${v}'`).join('\n'));
+	fs.writeFileSync('list.txt', videos.map(v => `file '${v}'`).join('\n'));
 	const subprocess = spawn('ffmpeg', [
 		'-y',
 		'-f', 'concat', '-safe', '0',
@@ -42,10 +42,10 @@ function spliceUp(videos, speedMultiplier, out){
 		'-progress', `tcp://127.0.0.1:${port}`,
 		'-an', '-vf', `setpts=PTS/${speedMultiplier}`, out
 	]);
-  subprocess.on('close', code => {
-    fs.unlink('list.txt', e => {if (e) throw err});
-    videoDurations.length = 0;
-  })
+	subprocess.on('close', code => {
+		fs.unlink('list.txt', e => {if (e) throw err;});
+		videoDurations.length = 0;
+	});
 }
 
 
@@ -53,7 +53,7 @@ function createWindow () {
 	mainWindow = new BrowserWindow({
 		width: 768,
 		height: 432,
-    icon: __dirname + './src/static/icon/icon.ico'
+		icon: __dirname + './src/static/icon/icon.ico'
 	});
 
 	mainWindow.openDevTools();
@@ -67,22 +67,22 @@ function createWindow () {
 
 
 const ffmpegProgressServer = net.createServer(socket => {
-  socket.on('error', e => {})
-  socket.on('data', data => {
-    data = parseFFMPEGProgress(data.toString('utf-8'));
-    if (videoDurations){
-      data.out_time_final = videoDurations.reduce((a, b) => a+b);
-    } else {
-      data.out_time_final = 0;
-    }
+	socket.on('error', e => {});
+	socket.on('data', data => {
+		data = parseFFMPEGProgress(data.toString('utf-8'));
+		if (videoDurations){
+			data.out_time_final = videoDurations.reduce((a, b) => a+b);
+		} else {
+			data.out_time_final = 0;
+		}
 
-    if (appChannel){
-      appChannel.sender.send('progress', data);
-    }
-  });
+		if (appChannel){
+			appChannel.sender.send('progress', data);
+		}
+	});
 });
 ffmpegProgressServer.listen(0, '127.0.0.1', () => {
-  port = ffmpegProgressServer.address().port;
+	port = ffmpegProgressServer.address().port;
 });
 
 app.on('ready', createWindow);
@@ -100,6 +100,6 @@ app.on('activate', function () {
 });
 
 ipcMain.on('export', (e, payload) => {
-  appChannel = e;
-  spliceUp(payload.videos, payload.speedMultiplier, payload.outputDir)
+	appChannel = e;
+	spliceUp(payload.videos, payload.speedMultiplier, payload.outputDir);
 });

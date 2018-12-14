@@ -15,27 +15,27 @@
  * progress=end
  * @returns {object}
  */
- function parseFFMPEGProgress(progress){
-  const reBitrate = /bitrate=(.*)/;
-  const reTotalSize = /total_size=(.*)/;
-  const reOutTime = /out_time=(.*)/;
-  const reProgress = /progress=(.*)/;
-  let result = {};
-  if (reBitrate.test(progress)){
-    result.bitrate = reBitrate.exec(progress)[1];
-  }
-  if (reTotalSize.test(progress)){
-    result.total_size = Number(reTotalSize.exec(progress)[1]);
-  }
-  if (reOutTime.test(progress)){
-    result.out_time = reOutTime.exec(progress)[1];
-  }
-  if (reProgress.test(progress)){
-    result.progress = reProgress.exec(progress)[1];
-  }
-  return result;
+function parseFFMPEGProgress(progress){
+	const reBitrate = /bitrate=(.*)/;
+	const reTotalSize = /total_size=(.*)/;
+	const reOutTime = /out_time=(.*)/;
+	const reProgress = /progress=(.*)/;
+	let result = {};
+	if (reBitrate.test(progress)){
+		result.bitrate = reBitrate.exec(progress)[1];
+	}
+	if (reTotalSize.test(progress)){
+		result.total_size = Number(reTotalSize.exec(progress)[1]);
+	}
+	if (reOutTime.test(progress)){
+		result.out_time = reOutTime.exec(progress)[1];
+	}
+	if (reProgress.test(progress)){
+		result.progress = reProgress.exec(progress)[1];
+	}
+	return result;
 }
 
 module.exports = {
 	parseFFMPEGProgress
-}
+};

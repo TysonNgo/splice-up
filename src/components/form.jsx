@@ -63,7 +63,6 @@ class Form extends Component{
 
 	changePreview(v){
 		return e => {
-			console.log(e.target.hasFocus)
 			this.setState({preview: v});
 		}
 	}
