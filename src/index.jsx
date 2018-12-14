@@ -14,9 +14,8 @@ class App extends Component{
 
 	render(){
 		return (
-		<div>
+		<div className='container'>
 			<Form ipc={this.ipc}></Form>
-			<br></br>
 			<Progress ipc={this.ipc}></Progress>
 		</div>
 		)

@@ -5,7 +5,8 @@ class Progress extends Component{
 		super(props);
 		this.state = {
 			text: '',
-			progress: 0
+			progress: 0,
+			active: false
 		};
 	}
 
@@ -14,8 +15,11 @@ class Progress extends Component{
 			if (d.progress === 'end') {
 				return this.setState({
 					text: 'video exported!',
-					progress: 100
+					progress: 100,
+					active: false
 				})
+			} else {
+				this.setState({active: true});
 			}
 			let progress = (this.hhmmssToSeconds(d.out_time)/d.out_time_final * 100).toFixed(1);
 			this.setState({
@@ -58,7 +62,7 @@ class Progress extends Component{
 	render(){
 		return (
 			<div className='progress-container'>
-				<div className='progress-bar'>
+				<div className={this.state.active ? 'progress-bar active' : 'progress-bar'}>
 					<div className='progress-bar-loaded' style={{width: this.state.progress + '%'}}></div>
 					<div className='progress-bar-text'>{this.state.progress ? this.state.progress + '%' : ''}</div>
 				</div>

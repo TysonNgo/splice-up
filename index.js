@@ -52,7 +52,8 @@ function spliceUp(videos, speedMultiplier, out){
 function createWindow () {
 	mainWindow = new BrowserWindow({
 		width: 768,
-		height: 432
+		height: 432,
+    icon: __dirname + './src/static/icon/icon.ico'
 	});
 
 	mainWindow.openDevTools();
@@ -66,6 +67,7 @@ function createWindow () {
 
 
 const ffmpegProgressServer = net.createServer(socket => {
+  socket.on('error', e => {})
   socket.on('data', data => {
     data = parseFFMPEGProgress(data.toString('utf-8'));
     if (videoDurations){
