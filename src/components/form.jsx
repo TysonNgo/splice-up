@@ -46,8 +46,7 @@ class Form extends Component{
 		for (let i = 0; i < files.length; i++){
 			if (files[i].type.startsWith('video')){
 				this.setState(prev => ({
-					videos: new Set(prev.videos.add(files[i].path)),
-					preview: files[i].path
+					videos: new Set(prev.videos.add(files[i].path))
 				}))
 			}
 		}
@@ -57,6 +56,13 @@ class Form extends Component{
 		e.preventDefault();
 	}
 
+	changePreview(v){
+		return e => {
+			console.log(e.target.hasFocus)
+			this.setState({preview: v});
+		}
+	}
+
 	render(){
 		return (
 			<form onSubmit={this.exportVideo.bind(this)}>
@@ -64,7 +70,7 @@ class Form extends Component{
 					<div className='video-preview'><video src={this.state.preview} controls></video></div>
 					<ul className='video-list'>
 						{[...this.state.videos].map(v => (
-							<li key={v} tabIndex={0}>{v}</li>
+							<li key={v} tabIndex={0} onDoubleClick={this.changePreview(v)}>{v.replace(/\\/g,'/').split('/').pop()}</li>
 						))}
 					</ul>
 				</div>

@@ -15,8 +15,9 @@
 }
 *{
 	font-family: sans-serif;
+	color: #2f2f2f;
 }
-html, body{
+body{
 	margin: 0;
 	background: #eee;
 }
@@ -27,6 +28,13 @@ label{
 input{
 	margin-left: 2em;
 }
+button{
+	cursor: pointer;
+	float: right;
+	margin: 0 0.3em;
+	width: 12em;
+	
+}
 .container{
 	display:flex;
 	flex-direction: column; 
@@ -34,6 +42,7 @@ input{
 	height: 100vh;
 }
 .video-container{
+	$height: 70vh;
 	display: flex;
 	flex-direction: row;
 	margin: 0.25em;
@@ -41,7 +50,7 @@ input{
 		position: relative;
 		background: #000;
 		width: 66%;
-		height: 70vh;
+		height: $height;
 		video{
 			width: auto;
 			min-height: 100%;
@@ -54,8 +63,19 @@ input{
 	.video-list{
 		list-style-type: none;
 		width: 33%;
+		height: calc(#{$height} - 0.25em);
+		margin: 0;
+		padding: 0.25em;
+		font-size: 0.75em;
+		overflow-y: scroll;
+		overflow-x: hidden;
 		li{
-
+			user-select: none;
+			cursor: pointer;
+			background: #cddbf3;
+		}
+		li:nth-child(even){
+			background: #adc6f3;
 		}
 	}
 }
@@ -101,5 +121,6 @@ input{
 	}
 	.progress-text{
 		text-align: left;
+		margin: 0.25em 0;
 	}
 }
