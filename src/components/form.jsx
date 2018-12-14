@@ -70,7 +70,7 @@ class Form extends Component{
 					<div className='video-preview'><video src={this.state.preview} controls></video></div>
 					<ul className='video-list'>
 						{[...this.state.videos].map(v => (
-							<li key={v} tabIndex={0} onDoubleClick={this.changePreview(v)}>{v.replace(/\\/g,'/').split('/').pop()}</li>
+							<li title={v} key={v} tabIndex={0} onDoubleClick={this.changePreview(v)}>{v.replace(/\\/g,'/').split('/').pop()}</li>
 						))}
 					</ul>
 				</div>

@@ -65,11 +65,16 @@ button{
 		width: 33%;
 		height: calc(#{$height} - 0.25em);
 		margin: 0;
-		padding: 0.25em;
+		padding-left: 0.25em;
 		font-size: 0.75em;
 		overflow-y: scroll;
 		overflow-x: hidden;
 		li{
+			padding-top: 0.8em;
+			padding-left: 0.4em;
+			padding-right: 0.4em;
+			height: 4.5em;
+			max-height: 4.5em;
 			user-select: none;
 			cursor: pointer;
 			background: #cddbf3;
