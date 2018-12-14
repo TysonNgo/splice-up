@@ -67,6 +67,16 @@ class Form extends Component{
 		}
 	}
 
+	removeVid(vid){
+		return e => {
+			this.setState(prev => {
+				let videos = prev.videos;
+				videos.delete(vid);
+				return {videos: videos}
+			})
+		}
+	}
+
 	render(){
 		return (
 			<form onSubmit={this.exportVideo.bind(this)}>
@@ -74,7 +84,10 @@ class Form extends Component{
 					<div className='video-preview'><video src={this.state.preview} controls></video></div>
 					<ul className={this.state.videos.size ? 'video-list' : 'video-list empty'}>
 						{[...this.state.videos].map(v => (
-							<li title={v} key={v} tabIndex={0} onDoubleClick={this.changePreview(v)}>{v.replace(/\\/g,'/').split('/').pop()}</li>
+							<li onDrag={this.test} title={v} key={v} tabIndex={0} onDoubleClick={this.changePreview(v)}>
+								{v.replace(/\\/g,'/').split('/').pop()}
+								<a href='#' className='close' onClick={this.removeVid(v).bind(this)}></a>
+							</li>
 						))}
 					</ul>
 				</div>
