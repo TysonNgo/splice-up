@@ -56,7 +56,7 @@ function spliceUp(videos, speedMultiplier, out, mute=true){
 	}
 	const subprocess = spawn('ffmpeg', args);
 	subprocess.on('close', code => {
-		fs.unlink('list.txt', e => {if (e) throw err;});
+		fs.unlink('list.txt', e => {if (e) throw e;});
 		videoDurations.length = 0;
 	});
 }
