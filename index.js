@@ -66,7 +66,7 @@ function createWindow () {
 	mainWindow = new BrowserWindow({
 		width: 768,
 		height: 432,
-		icon: __dirname + './src/static/icon/icon.ico'
+		icon: __dirname + './src/static/icon/icon.png'
 	});
 
 	// mainWindow.openDevTools();
