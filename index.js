@@ -42,13 +42,17 @@ function spliceUp(videos, speedMultiplier, out, mute=true){
 		'-progress', `tcp://127.0.0.1:${port}`,
 		'-vf', `setpts=PTS/${speedMultiplier}`, out
 	];
-	if (mute || (speedMultiplier > 2 || speedMultiplier < 0.5)){
-		// ffmpeg can only speed up audio to a max of
-		// double the original and slow down to a min
-		// of half the original
+	if (mute || speedMultiplier < 0.5){
 		args.splice(args.indexOf('-vf'), 0, '-an');
 	} else {
-		args.splice(args.indexOf(out), 0, ...['-filter:a', `atempo=${speedMultiplier}`]);
+		let exp = (Math.floor(speedMultiplier)).toString(2).length-1;
+		let remainder = speedMultiplier/(2 ** exp);
+
+		let speedUp = Array(exp).fill('atempo=2');
+		speedUp.push(`atempo=${remainder}`);
+		speedUp = speedUp.join(',');
+
+		args.splice(args.indexOf(out), 0, ...['-filter:a', speedUp]);
 	}
 	const subprocess = spawn('ffmpeg', args);
 	subprocess.on('close', code => {

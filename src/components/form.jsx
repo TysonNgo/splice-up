@@ -134,7 +134,6 @@ class Form extends Component{
 	}
 
 	render(){
-		let forcedMute = !this.state.mute && (this.state.speedMultiplier > 2 || this.state.speedMultiplier < 0.5);
 		return (
 			<form onSubmit={this.exportVideo.bind(this)}>
 				<div className='video-container' onDragOver={this.dragOver} onDrop={this.dropVideo.bind(this)}>
@@ -155,7 +154,7 @@ class Form extends Component{
 						Speed Multiplier:
 						<input type='number' min='0.5' step='0.1' onChange={this.speedMultiplierChange.bind(this)} value={this.state.speedMultiplier}></input>
 					</label>
-					<label title={forcedMute ? 'The output will not contain audio if the speed multiplier is not within the range 0.5-2.0.' : null} style={forcedMute ? {color: 'red'} : null}>
+					<label>
 						Mute output:
 						<input type='checkbox' checked={this.state.mute} onChange={this.toggleMute.bind(this)}></input>
 					</label>
