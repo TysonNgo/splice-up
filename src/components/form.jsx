@@ -21,7 +21,7 @@ class Form extends Component{
 			}
 		})
 	}
-	
+
 	speedMultiplierChange(e){
 		this.setState({speedMultiplier: e.target.value})
 	}
@@ -84,18 +84,22 @@ class Form extends Component{
 					<div className='video-preview'><video src={this.state.preview} controls></video></div>
 					<ul className={this.state.videos.size ? 'video-list' : 'video-list empty'}>
 						{[...this.state.videos].map(v => (
-							<li onDrag={this.test} title={v} key={v} tabIndex={0} onDoubleClick={this.changePreview(v)}>
+							<li title={v} key={v} tabIndex={0} onDoubleClick={this.changePreview(v)}
+							draggable onDrag={this.test} onDragOver={(e) => {console.log(e.dataTransfer)}}
+							>
 								{v.replace(/\\/g,'/').split('/').pop()}
 								<a href='#' className='close' onClick={this.removeVid(v).bind(this)}></a>
 							</li>
 						))}
 					</ul>
 				</div>
-				<label>
-					Speed Multiplier:
-					<input type='number' min={1} onChange={this.speedMultiplierChange.bind(this)} value={this.state.speedMultiplier}></input>
-				</label>
-				<button disabled={!this.state.canExport || !this.state.videos.size}>export</button>
+				<div className='submission-container'>
+					<label>
+						Speed Multiplier:
+						<input type='number' min={1} onChange={this.speedMultiplierChange.bind(this)} value={this.state.speedMultiplier}></input>
+					</label>
+					<button disabled={!this.state.canExport || !this.state.videos.size}>export</button>
+				</div>
 			</form>
 		)
 	}
