@@ -10,16 +10,12 @@
     "build": "webpack --mode production",
     "ffbin": "ffbinaries ffmpeg ffprobe",
     "lint": "eslint . --fix",
-    "package-win": "npm run build && electron-packager . SpliceUp --overwrite --asar=true --platform=win32 --arch=x64 --icon=src/static/icon/icon.ico --prune=true --out=release-builds && npm run ffbin -- -p=win-64 -o=release-builds/SpliceUp-win32-x64",
-    "package-mac": "npm run build && electron-packager . --overwrite --platform=darwin --arch=x64 --icon=src/static/icon/icon.icns --prune=true --out=release-builds && npm run ffbin -- -p=mac -o=release-builds/splice-up-darwin-x64",
-    "package-linux": "npm run build && electron-packager . SpliceUp --overwrite --asar=true --platform=linux --arch=x64 --icon=src/static/icon/icon.png --prune=true --out=release-builds && npm run ffbin -- -p=linux-64 -o=release-builds/SpliceUp-linux-x64"
+    "package-win": "npm run build && electron-packager . SpliceUp --overwrite --ignore=\"(ffmpeg|ffprobe|doc/|src/|\\.mp4$|\\.babel|\\.eslint|\\.gitignore|package-lock\\.json|webpack)\" --asar=true --platform=win32 --arch=x64 --icon=src/static/icon/icon.ico --prune=true --out=release-builds && npm run ffbin -- -p=win-64 -o=release-builds/SpliceUp-win32-x64",
+    "package-mac": "npm run build && electron-packager . --overwrite --ignore=\"(ffmpeg|ffprobe|doc/|src/|\\.mp4$|\\.babel|\\.eslint|\\.gitignore|package-lock\\.json|webpack)\" --platform=darwin --arch=x64 --icon=src/static/icon/icon.icns --prune=true --out=release-builds && npm run ffbin -- -p=mac -o=release-builds/splice-up-darwin-x64",
+    "package-linux": "npm run build && electron-packager . SpliceUp --overwrite --ignore=\"(ffmpeg|ffprobe|doc/|src/|\\.mp4$|\\.babel|\\.eslint|\\.gitignore|package-lock\\.json|webpack)\" --asar=true --platform=linux --arch=x64 --icon=src/static/icon/icon.png --prune=true --out=release-builds && npm run ffbin -- -p=linux-64 -o=release-builds/SpliceUp-linux-x64"
   },
   "author": "Tyson Ngo",
-  "dependencies": {
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
-    "react-router-dom": "^4.2.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.2.0",
     "@babel/preset-env": "^7.2.0",
@@ -40,6 +36,9 @@
     "style-loader": "^0.23.1",
     "url-loader": "^1.1.2",
     "webpack": "^4.6.0",
-    "webpack-cli": "^3.1.2"
+    "webpack-cli": "^3.1.2",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-router-dom": "^4.2.2"
   }
 }
