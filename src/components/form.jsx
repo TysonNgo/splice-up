@@ -7,6 +7,7 @@ class Form extends Component{
 			videos: new Set(),
 			speedMultiplier: 360,
 			preview: '',
+			mute: true,
 			canExport: true
 		}
 		this.dialog = window.require('electron').remote.dialog;
@@ -39,6 +40,7 @@ class Form extends Component{
 			let data = {
 				videos: [...this.state.videos],
 				speedMultiplier: this.state.speedMultiplier,
+				mute: this.state.mute,
 				outputDir: exportPath
 			}
 			this.props.ipc.send('export', data);
@@ -125,7 +127,14 @@ class Form extends Component{
 		}
 	}
 
+	toggleMute(e){
+		this.setState(prev => ({
+			mute: !prev.mute
+		}))
+	}
+
 	render(){
+		let forcedMute = !this.state.mute && (this.state.speedMultiplier > 2 || this.state.speedMultiplier < 0.5);
 		return (
 			<form onSubmit={this.exportVideo.bind(this)}>
 				<div className='video-container' onDragOver={this.dragOver} onDrop={this.dropVideo.bind(this)}>
@@ -144,7 +153,11 @@ class Form extends Component{
 				<div className='submission-container'>
 					<label>
 						Speed Multiplier:
-						<input type='number' min={1} onChange={this.speedMultiplierChange.bind(this)} value={this.state.speedMultiplier}></input>
+						<input type='number' min='0.5' step='0.1' onChange={this.speedMultiplierChange.bind(this)} value={this.state.speedMultiplier}></input>
+					</label>
+					<label title={forcedMute ? 'The output will not contain audio if the speed multiplier is not within the range 0.5-2.0.' : null} style={forcedMute ? {color: 'red'} : null}>
+						Mute output:
+						<input type='checkbox' checked={this.state.mute} onChange={this.toggleMute.bind(this)}></input>
 					</label>
 					<button disabled={!this.state.canExport || !this.state.videos.size}>export</button>
 				</div>

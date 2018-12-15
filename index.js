@@ -21,7 +21,7 @@ let videoDurations = [];
  * @param {string} out - output path
  * @returns {void}
  */
-function spliceUp(videos, speedMultiplier, out){
+function spliceUp(videos, speedMultiplier, out, mute=true){
 	// store video durations (seconds) 
 	videos.forEach(f => {
 		let probe = spawn('ffprobe', [
@@ -35,13 +35,22 @@ function spliceUp(videos, speedMultiplier, out){
 	});
 
 	fs.writeFileSync('list.txt', videos.map(v => `file '${v}'`).join('\n'));
-	const subprocess = spawn('ffmpeg', [
+	let args = [
 		'-y',
 		'-f', 'concat', '-safe', '0',
 		'-i', 'list.txt',
 		'-progress', `tcp://127.0.0.1:${port}`,
-		'-an', '-vf', `setpts=PTS/${speedMultiplier}`, out
-	]);
+		'-vf', `setpts=PTS/${speedMultiplier}`, out
+	];
+	if (mute || (speedMultiplier > 2 || speedMultiplier < 0.5)){
+		// ffmpeg can only speed up audio to a max of
+		// double the original and slow down to a min
+		// of half the original
+		args.splice(args.indexOf('-vf'), 0, '-an');
+	} else {
+		args.splice(args.indexOf(out), 0, ...['-filter:a', `atempo=${speedMultiplier}`]);
+	}
+	const subprocess = spawn('ffmpeg', args);
 	subprocess.on('close', code => {
 		fs.unlink('list.txt', e => {if (e) throw err;});
 		videoDurations.length = 0;
@@ -56,7 +65,7 @@ function createWindow () {
 		icon: __dirname + './src/static/icon/icon.ico'
 	});
 
-	mainWindow.openDevTools();
+	// mainWindow.openDevTools();
 
 	mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
 
@@ -101,5 +110,5 @@ app.on('activate', function () {
 
 ipcMain.on('export', (e, payload) => {
 	appChannel = e;
-	spliceUp(payload.videos, payload.speedMultiplier, payload.outputDir);
+	spliceUp(payload.videos, payload.speedMultiplier, payload.outputDir, mute=payload.mute);
 });
