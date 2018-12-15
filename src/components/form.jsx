@@ -72,7 +72,12 @@ class Form extends Component{
 			this.setState(prev => {
 				let videos = prev.videos;
 				videos.delete(vid);
-				return {videos: videos}
+				
+				let state = {videos: videos};
+				if (prev.preview === vid){
+					state.preview = '';
+				}
+				return state;
 			})
 		}
 	}
@@ -84,7 +89,40 @@ class Form extends Component{
 	}
 
 	videoDrop(e){
-		console.log(e.dataTransfer.getData('video'), e.nativeEvent.offsetY, e.target.offsetHeight, e.dataTransfer.items, e.dataTransfer.files)
+		let video = e.target.title;
+		let videoDropped = e.dataTransfer.getData('video');
+		let droppedDown = e.nativeEvent.offsetY > e.target.offsetHeight / 2;
+
+		// only 2 accepted cases
+		// 1 - dropping a video list item
+		// 2 - dropping a video file
+		if (videoDropped){
+			this.setState(prev => {
+				let videos = prev.videos;
+				videos.delete(videoDropped);
+				videos = [...videos];
+				videos.splice(videos.indexOf(video)+droppedDown, 0, videoDropped);
+				return {
+					videos: new Set(videos)
+				}
+			})
+		} else if (e.dataTransfer.files.length){
+			let video_files = [];
+			for (let i = 0; i < e.dataTransfer.files.length; i++){
+				if (e.dataTransfer.files[i].type.startsWith('video')){
+					video_files.push(e.dataTransfer.files[i].path);
+				}
+			}
+			if (video_files.length){
+				this.setState(prev => {
+					let videos = [...prev.videos];
+					videos.splice(videos.indexOf(video)+droppedDown, 0, ...video_files);
+					return {
+						videos: new Set(videos)
+					}
+				})
+			}
+		}
 	}
 
 	render(){
@@ -95,7 +133,7 @@ class Form extends Component{
 					<ul className={this.state.videos.size ? 'video-list' : 'video-list empty'}>
 						{[...this.state.videos].map(v => (
 							<li title={v} key={v} tabIndex={0} onDoubleClick={this.changePreview(v)}
-							draggable onDrag={this.test} onDragOver={e => e.preventDefault()} onDragStart={this.videoDragStart(v)} onDrop={this.videoDrop}
+							draggable onDrag={this.test} onDragOver={e => e.preventDefault()} onDragStart={this.videoDragStart(v)} onDrop={this.videoDrop.bind(this)}
 							>
 								{v.replace(/\\/g,'/').split('/').pop()}
 								<a href='#' className='close' onClick={this.removeVid(v).bind(this)}></a>
