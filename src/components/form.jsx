@@ -77,6 +77,16 @@ class Form extends Component{
 		}
 	}
 
+	videoDragStart(video_path){
+		return e => {
+			e.dataTransfer.setData('video', video_path);
+		}
+	}
+
+	videoDrop(e){
+		console.log(e.dataTransfer.getData('video'), e.nativeEvent.offsetY, e.target.offsetHeight, e.dataTransfer.items, e.dataTransfer.files)
+	}
+
 	render(){
 		return (
 			<form onSubmit={this.exportVideo.bind(this)}>
@@ -85,7 +95,7 @@ class Form extends Component{
 					<ul className={this.state.videos.size ? 'video-list' : 'video-list empty'}>
 						{[...this.state.videos].map(v => (
 							<li title={v} key={v} tabIndex={0} onDoubleClick={this.changePreview(v)}
-							draggable onDrag={this.test} onDragOver={(e) => {console.log(e.dataTransfer)}}
+							draggable onDrag={this.test} onDragOver={e => e.preventDefault()} onDragStart={this.videoDragStart(v)} onDrop={this.videoDrop}
 							>
 								{v.replace(/\\/g,'/').split('/').pop()}
 								<a href='#' className='close' onClick={this.removeVid(v).bind(this)}></a>
