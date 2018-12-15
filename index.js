@@ -63,9 +63,13 @@ function spliceUp(videos, speedMultiplier, out, mute=true){
 
 
 function createWindow () {
+	const width = 768;
+	const height = 432;
 	mainWindow = new BrowserWindow({
-		width: 768,
-		height: 432,
+		width: width,
+		height: height,
+		minWidth: width,
+		minHeight: height,
 		icon: __dirname + './src/static/icon/icon.png'
 	});
 

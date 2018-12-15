@@ -10,9 +10,9 @@
     "build": "webpack --mode production",
     "ffbin": "ffbinaries ffmpeg ffprobe",
     "lint": "eslint . --fix",
-    "package-win": "electron-packager . SpliceUp --overwrite --asar=true --platform=win32 --arch=x64 --icon=src/static/icon/icon.ico --prune=true --out=release-builds && npm run ffbin -- -p=win-64 -o=release-builds/SpliceUp-win32-x64",
-    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=src/static/icon/icon.icns --prune=true --out=release-builds && npm run ffbin -- -p=mac -o=release-builds/splice-up-darwin-x64",
-    "package-linux": "electron-packager . SpliceUp --overwrite --asar=true --platform=linux --arch=x64 --icon=src/static/icon/icon.png --prune=true --out=release-builds && npm run ffbin -- -p=linux-64 -o=release-builds/SpliceUp-linux-x64"
+    "package-win": "npm run build && electron-packager . SpliceUp --overwrite --asar=true --platform=win32 --arch=x64 --icon=src/static/icon/icon.ico --prune=true --out=release-builds && npm run ffbin -- -p=win-64 -o=release-builds/SpliceUp-win32-x64",
+    "package-mac": "npm run build && electron-packager . --overwrite --platform=darwin --arch=x64 --icon=src/static/icon/icon.icns --prune=true --out=release-builds && npm run ffbin -- -p=mac -o=release-builds/splice-up-darwin-x64",
+    "package-linux": "npm run build && electron-packager . SpliceUp --overwrite --asar=true --platform=linux --arch=x64 --icon=src/static/icon/icon.png --prune=true --out=release-builds && npm run ffbin -- -p=linux-64 -o=release-builds/SpliceUp-linux-x64"
   },
   "build": {
     "extraResources": [
