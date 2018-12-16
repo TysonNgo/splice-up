@@ -2,6 +2,7 @@ const {
 	app, BrowserWindow, globalShortcut,
 	ipcMain, protocol
 } = require('electron');
+const { randomBytes } = require('crypto');
 const fs = require('fs');
 const { spawn } = require('child_process');
 const net = require('net');
@@ -71,12 +72,12 @@ function spliceUp(videos, speedMultiplier, out, mute=true){
 			videoDurations.push((Number(data.toString('utf-8')) | 0) / speedMultiplier);
 		});
 	});
-
-	fs.writeFileSync('list.txt', videos.map(v => `file '${v}'`).join('\n'));
+	let tempFile = randomBytes(16).toString('hex')+'.txt';
+	fs.writeFileSync(tempFile, videos.map(v => `file '${v}'`).join('\n'));
 	let args = [
 		'-y',
 		'-f', 'concat', '-safe', '0',
-		'-i', 'list.txt',
+		'-i', tempFile,
 		'-progress', `tcp://127.0.0.1:${port}`,
 		'-vf', `setpts=PTS/${speedMultiplier}`, out
 	];
@@ -94,7 +95,7 @@ function spliceUp(videos, speedMultiplier, out, mute=true){
 	}
 	const subprocess = spawn('ffmpeg', args, { stdio: 'ignore' });
 	subprocess.on('close', code => {
-		fs.unlink('list.txt', e => {if (e) throw e;});
+		fs.unlink(tempFile, e => {if (e) throw e;});
 		videoDurations.length = 0;
 	});
 }
@@ -107,7 +108,7 @@ function spliceUp(videos, speedMultiplier, out, mute=true){
  */
 function hhmmssToSeconds(t){
 	if (/^\d\d:\d\d:\d\d\.\d+$/.test(t)){
-		let [h, m, s] = t.split(':')
+		let [h, m, s] = t.split(':');
 		h = Number(h) * 60 * 60;
 		m = Number(m) * 60;
 		s = h + m + Number(s);
