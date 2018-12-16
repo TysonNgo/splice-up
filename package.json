@@ -1,6 +1,6 @@
 {
   "name": "splice-up",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A tool to speed up and join multiple videos",
   "main": "index.js",
   "scripts": {
