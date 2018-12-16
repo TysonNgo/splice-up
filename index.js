@@ -92,11 +92,28 @@ function spliceUp(videos, speedMultiplier, out, mute=true){
 
 		args.splice(args.indexOf(out), 0, ...['-filter:a', speedUp]);
 	}
-	const subprocess = spawn('ffmpeg', args);
+	const subprocess = spawn('ffmpeg', args, { stdio: 'ignore' });
 	subprocess.on('close', code => {
 		fs.unlink('list.txt', e => {if (e) throw e;});
 		videoDurations.length = 0;
 	});
+}
+
+
+/* Converts a time string in the
+ * format HH:MM:SS to seconds
+ * @param {string} t
+ * @returns {int}
+ */
+function hhmmssToSeconds(t){
+	if (/^\d\d:\d\d:\d\d\.\d+$/.test(t)){
+		let [h, m, s] = t.split(':')
+		h = Number(h) * 60 * 60;
+		m = Number(m) * 60;
+		s = h + m + Number(s);
+		return s;
+	}
+	return 0;
 }
 
 
@@ -127,8 +144,19 @@ const ffmpegProgressServer = net.createServer(socket => {
 		data = parseFFMPEGProgress(data.toString('utf-8'));
 		if (videoDurations){
 			data.out_time_final = videoDurations.reduce((a, b) => a+b);
+			data.percentage = hhmmssToSeconds(data.out_time)/data.out_time_final;
 		} else {
 			data.out_time_final = 0;
+			data.percentage = 0;
+		}
+
+		if (mainWindow){
+			if (data.percentage < 1){
+				mainWindow.setProgressBar(data.percentage);
+			}
+			if (data.progress === 'end') {
+				mainWindow.setProgressBar(0);
+			}
 		}
 
 		if (appChannel){

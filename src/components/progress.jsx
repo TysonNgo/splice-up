@@ -21,12 +21,12 @@ class Progress extends Component{
 			} else {
 				this.setState({active: true});
 			}
-			let progress = (this.hhmmssToSeconds(d.out_time)/d.out_time_final * 100).toFixed(1);
+			let progress = (d.percentage * 100).toFixed(1);
 			this.setState({
 				text: `processed: ${d.out_time} | ` +
 				`size: ${this.humanFileSize(d.total_size)}`+
 				`${d.bitrate === 'N/A' ? '' : ' | bitrate: '+d.bitrate}`,
-				progress: progress
+				progress: Math.min(100, progress)
 			});
 		})
 	}
@@ -48,23 +48,12 @@ class Progress extends Component{
 		return bytes.toFixed(1)+' '+units[u];
 	}
 
-	hhmmssToSeconds(t){
-		if (/^\d\d:\d\d:\d\d\.\d+$/.test(t)){
-			let [h, m, s] = t.split(':')
-			h = Number(h) * 60 * 60;
-			m = Number(m) * 60;
-			s = h + m + Number(s);
-			return s;
-		}
-		return 0;
-	}
-
 	render(){
 		return (
 			<div className='progress-container'>
 				<div className={this.state.active ? 'progress-bar active' : 'progress-bar'}>
 					<div className='progress-bar-loaded' style={{width: this.state.progress + '%'}}></div>
-					<div className='progress-bar-text'>{this.state.progress ? this.state.progress + '%' : ''}</div>
+					<div className='progress-bar-text'>{this.state.active ? this.state.progress + '%' : ''}</div>
 				</div>
 				<div className='progress-text'>{this.state.text}</div>
 			</div>
