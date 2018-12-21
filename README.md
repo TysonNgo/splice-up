@@ -7,6 +7,8 @@ Go to [releases](../../releases), then download and extract either the Linux or 
 
 ### Instructions
 
+\* note: may not work with files of different types.
+
 ![](doc/instructions.png)
 
 ### Example
