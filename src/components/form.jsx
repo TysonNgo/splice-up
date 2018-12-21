@@ -90,6 +90,27 @@ class Form extends Component{
 		}
 	}
 
+	openVideo(e){
+		if (e.target.draggable) return;
+		let res = this.dialog.showOpenDialog({
+			title: 'Select Video File(s)',
+			properties: ['openFile', 'multiSelections'],
+			filters: [{
+				name: 'Video',
+				extensions: ['mp4', 'mkv', 'webm', 'avi']
+			}]
+		})
+
+		if (res){
+			this.setState(prev => {
+				res.forEach(v => {
+					prev.videos.add(v);
+				})
+				return {videos: prev.videos}
+			})
+		}
+	}
+
 	videoDrop(e){
 		let video = e.target.title;
 		let videoDropped = e.dataTransfer.getData('video');
@@ -138,10 +159,10 @@ class Form extends Component{
 			<form onSubmit={this.exportVideo.bind(this)}>
 				<div className='video-container' onDragOver={this.dragOver} onDrop={this.dropVideo.bind(this)}>
 					<div className='video-preview'><video src={this.state.preview} controls></video></div>
-					<ul className={this.state.videos.size ? 'video-list' : 'video-list empty'}>
+					<ul className={this.state.videos.size ? 'video-list' : 'video-list empty'} onClick={this.openVideo.bind(this)}>
 						{[...this.state.videos].map(v => (
 							<li title={v} key={v} tabIndex={0} onDoubleClick={this.changePreview(v)}
-							draggable onDrag={this.test} onDragOver={e => e.preventDefault()} onDragStart={this.videoDragStart(v)} onDrop={this.videoDrop.bind(this)}
+							draggable onDragOver={e => e.preventDefault()} onDragStart={this.videoDragStart(v)} onDrop={this.videoDrop.bind(this)}
 							>
 								{v.replace(/\\/g,'/').split('/').pop()}
 								<a href='#' className='close' onClick={this.removeVid(v).bind(this)}></a>

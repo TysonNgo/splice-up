@@ -95,6 +95,7 @@ button[disabled]{
 		background-repeat: no-repeat;
 		background-size: 50%;
 		background-position: 75% 85%;
+		cursor: pointer;
 		&.empty{
 			background-image: url('../icon/video_icon.png');
 		}
