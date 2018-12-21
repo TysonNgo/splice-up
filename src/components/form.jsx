@@ -176,10 +176,10 @@ class Form extends Component{
 						<input type='number' min='0.5' step='0.1' onChange={this.speedMultiplierChange.bind(this)} value={this.state.speedMultiplier}></input>
 					</label>
 					<label>
-						Mute output:
+						Mute Output:
 						<input type='checkbox' checked={this.state.mute} onChange={this.toggleMute.bind(this)}></input>
 					</label>
-					<button disabled={!this.state.canExport || !this.state.videos.size}>export</button>
+					<button disabled={!this.state.canExport || !this.state.videos.size}>Export</button>
 				</div>
 			</form>
 		)
