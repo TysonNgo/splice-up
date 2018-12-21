@@ -1,6 +1,6 @@
 const {
-	app, BrowserWindow, globalShortcut,
-	ipcMain, protocol
+	app, BrowserWindow, dialog,
+	globalShortcut, ipcMain, protocol
 } = require('electron');
 const { randomBytes } = require('crypto');
 const fs = require('fs');
@@ -12,6 +12,7 @@ let appChannel;
 let port;
 let mainWindow;
 let videoDurations = [];
+let isProcessing = false;
 
 
 /*
@@ -72,6 +73,13 @@ function spliceUp(videos, speedMultiplier, out, mute=true){
 			videoDurations.push((Number(data.toString('utf-8')) | 0) / speedMultiplier);
 		});
 	});
+	
+	// clean up temporary files
+	fs.readdirSync(__dirname).filter(f => path.extname(f) === '.txt')
+		.forEach(f => {
+			fs.unlink(f, e => {if (e) throw e;});
+		});
+
 	let tempFile = randomBytes(16).toString('hex')+'.txt';
 	fs.writeFileSync(tempFile, videos.map(v => `file '${v}'`).join('\n'));
 	let args = [
@@ -136,6 +144,23 @@ function createWindow () {
 	mainWindow.on('closed', function () {
 		mainWindow = null;
 	});
+
+	mainWindow.on('close', function(e){
+		if (isProcessing){
+			const buttons = ['Yes', 'No'];
+			const NO = buttons.indexOf('No');
+			let choice = dialog.showMessageBox(this, {
+				this: 'question',
+				buttons: buttons,
+				title: 'Confirm',
+				message: 'The video is currently being processed, are you sure you want to quit?'
+			});
+
+			if (choice === NO){
+				e.preventDefault();
+			}
+		}
+	});
 }
 
 
@@ -158,6 +183,8 @@ const ffmpegProgressServer = net.createServer(socket => {
 			if (data.progress === 'end') {
 				mainWindow.setProgressBar(0);
 			}
+
+			isProcessing = data.progress === 'continue';
 		}
 
 		if (appChannel){
