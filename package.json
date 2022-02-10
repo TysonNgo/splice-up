@@ -30,7 +30,7 @@
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "ffbinaries": "^1.1.0",
     "html-webpack-plugin": "^4.0.0-beta.4",
-    "node-sass": "^4.10.0",
+    "node-sass": "^7.0.0",
     "nodemon": "^1.17.3",
     "sass-loader": "^7.0.1",
     "style-loader": "^0.23.1",
